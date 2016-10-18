@@ -1,0 +1,115 @@
+﻿<!--
+Code developed by Anurag Chatterjee. Please feel free to link your blogs/sites to this site.
+If you want to re-use the code to develop your own tool please contact me via email: anuragchatterjee92@gmail.com
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script>
+        var fetchToString = fetchToString || {};
+
+        fetchToString.processFetchInput = function () {
+            var fetchXmlInput = document.getElementById("input").value;
+            var processedStr = fetchToString.convertFetchToString(fetchXmlInput);
+            document.getElementById("output").value = processedStr;
+        }
+
+        fetchToString.convertFetchToString = function (fetchXml) {
+            var retVal = "";
+            if (fetchXml) {
+                var strValue = fetchXml;
+
+                // replace double quotes with single quotes
+                strValue = strValue.replace(new RegExp("\"", 'g'), "'");
+
+                // split by newlines and append 
+                var splitStrs = strValue.split("\n");
+
+                for (var itr = 0; itr < splitStrs.length - 1; itr++) {
+
+                    // check the present string is not an empty string before wrapping it in quotes
+                    if (splitStrs[itr].length > 0) {
+                        // fix for valid hyphens getting removed - remove only invalid hyphens which occur at the start
+
+                        var valueToAppend = splitStrs[itr];
+
+                        // if hyphen at the very start
+                        if (valueToAppend[0] == '-') {
+                            valueToAppend = valueToAppend.replace("-", "");
+                        }
+                        else {
+                            // iterate through the split string searching for hyphen at the start
+                            for (var charcount = 1; charcount < valueToAppend.length; charcount++) {
+                                if (valueToAppend[charcount - 1] == ' ' && valueToAppend[charcount] == '-') {
+                                    valueToAppend = valueToAppend.replace("-", "");
+                                    break;
+                                }
+                            }
+                        }
+
+                        retVal += "\"" + valueToAppend + "\"+\n";
+                    }
+                }
+
+                if (splitStrs.length > 0) {
+                    if (splitStrs[splitStrs.length - 1].length > 0) {
+                        retVal += "\"" + splitStrs[splitStrs.length - 1] + "\";";
+                    }
+                }
+            }
+
+            return retVal;
+        }
+    </script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-79561928-2', 'auto');
+  ga('send', 'pageview');
+
+    </script>
+    <style>
+        .inline-div {
+            display:inline-block;
+        }
+
+        .inline-txtarea {
+            resize: none;
+            border : 2px solid red;
+            height:600px;
+        }
+
+        .centre-alignTxt {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <h3 class="centre-alignTxt">Dynamics CRM - Fetch XML to C#/ Javascript string</h3>            
+    <div>
+        <p>This web application will help to convert raw Fetch XML strings that are downloaded from the Dynamics CRM interface to strings that can be used in your JS/C# code.</p>
+        <p><b>How to use:</b> Give the source Fetch XML string inside the "Raw Fetch XML" area and click on the Convert! button to proceed</p>
+    </div>
+        <div class="inline-div">
+            <p><b>Raw Fetch XML</b></p>
+            <textarea id="input" cols="80" rows="15" class="inline-txtarea"></textarea>
+        </div>        
+        <div class="inline-div">
+            <p><b>Processed Fetch XML</b></p>
+            <textarea id="output" cols="80" rows="15" class="inline-txtarea"></textarea>
+        </div>    
+    <div>
+        <button value="Convert!" onclick="fetchToString.processFetchInput()">Convert!</button>
+    </div>
+    <div>
+        <p>Developed by Anurag Chatterjee. Contact <a href="mailto:anuragchatterjee92@gmail.com">here</a></p>        
+    </div>
+</body>
+</html>
