@@ -9,7 +9,7 @@ If you want to re-use the code to develop your own tool please contact me via em
     <title></title>
 	<meta charset="utf-8" />
     <script>
-        var fetchToString = fetchToString || {};
+        var fetchToString = fetchToString || {};       
 
         fetchToString.processFetchInput = function () {
             var fetchXmlInput = document.getElementById("input").value;
@@ -63,6 +63,33 @@ If you want to re-use the code to develop your own tool please contact me via em
 
             return retVal;
         }
+
+        /*
+            Replace the selected item with placeholder string
+        */
+        fetchToString.replaceSelectedItem = function () {
+            // get the selected item in the output
+            var outputTextAreaItem = document.getElementById("output");
+            var selectionStart = outputTextAreaItem.selectionStart;
+            var selectionEnd = outputTextAreaItem.selectionEnd;
+            if(selectionEnd >= selectionStart)
+            {
+                var existingOutputText = outputTextAreaItem.value;
+                var selectedText = existingOutputText.substring(selectionStart, selectionEnd);
+                if(selectedText)
+                {
+                    outputTextAreaItem.value = existingOutputText.replace(selectedText, "\" + PLACE_HOLDER + \"");
+                    document.getElementById("replaceBtn").disabled = true;
+                }
+            }            
+        }
+
+        /*
+            Enable the replace button
+        */
+        fetchToString.enableReplaceButton = function () {
+            document.getElementById("replaceBtn").disabled = false;
+        }
     </script>
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -96,6 +123,7 @@ If you want to re-use the code to develop your own tool please contact me via em
     <div>
         <p>This web application will help to convert raw Fetch XML strings that are downloaded from the Dynamics CRM interface to strings that can be used in your JS/C# code.</p>
         <p><b>How to use:</b> Give the source Fetch XML string inside the "Raw Fetch XML" area and click on the Convert! button to proceed</p>
+        <p><i>*Update*</i>: Select the item you want to replace with a placeholder by selecting the text in the output area and clicking on Replace button! </p>
     </div>
         <div class="inline-div">
             <p><b>Raw Fetch XML</b></p>
@@ -103,10 +131,11 @@ If you want to re-use the code to develop your own tool please contact me via em
         </div>        
         <div class="inline-div">
             <p><b>Processed Fetch XML</b></p>
-            <textarea id="output" cols="80" rows="15" class="inline-txtarea"></textarea>
+            <textarea id="output" cols="80" rows="15" class="inline-txtarea" onselect="fetchToString.enableReplaceButton()"></textarea>
         </div>    
     <div>
         <button value="Convert!" onclick="fetchToString.processFetchInput()">Convert!</button>
+        <button id="replaceBtn" value="Replace!" onclick="fetchToString.replaceSelectedItem()"  disabled="disabled" title="Select the item to replace with a placeholder">Replace!</button>                
     </div>
     <div>
         <p>Developed by Anurag Chatterjee. Contact <a href="mailto:anuragchatterjee92@gmail.com">here</a></p>        
